@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ImpalaConnectionPool extends BaseDataSource {
 	private static ImpalaConnectionPool instance = new ImpalaConnectionPool();
-	private static final String CONNECTION_URL = "jdbc:hive2://119.29.155.236:21050/;auth=noSasl";
+	private static final String CONNECTION_URL = "jdbc:hive2://127.0.0.1:21050/;auth=noSasl";
 	public static ImpalaConnectionPool getInstance(){
 		if(instance.DS == null){
 			//Map<String, String> conf = PropertiesUtil.getConf("comm");
