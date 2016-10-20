@@ -11,7 +11,7 @@ public class MySQLConnectionPool extends BaseDataSource {
 
     		String connectURI = CONNECTION_URL;
     		String username = "root";
-    		String pswd = "cndw@root@#$fdgs";
+    		String pswd = "";
     		//String pswd = "";
     		String driverClass = "com.mysql.jdbc.Driver";
     		int initialSize = 20;
