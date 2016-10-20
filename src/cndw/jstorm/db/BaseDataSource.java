@@ -1,18 +1,15 @@
-package cndw.jstorm.db;
+package com.cndw.statistics;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
-import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +22,16 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseDataSource {
 	/** 数据源，static */  
-    protected static BasicDataSource DS;  
-    private final static Logger LOG = LoggerFactory.getLogger(DvMysqlClient.class);
+    protected BasicDataSource DS = null;  
+    private final static Logger LOG = LoggerFactory.getLogger(BaseDataSource.class);
     /** 从数据源获得一个连接 */  
     public Connection getConn() {  
         Connection con = null;  
+        //LOG.info("=============数据库连接池信息"+DS.toString()+"，，，活动连接数"+DS.getNumActive()+"=======");
         if (DS != null) {  
             try {  
                 con = DS.getConnection();  
-                //LOG.info("=============数据库连接池信息"+DS.toString()+"======="+con);
+                
             } catch (Exception e) {  
                 e.printStackTrace(System.err);  
             }  
@@ -44,7 +42,9 @@ public class BaseDataSource {
 //                e.printStackTrace();  
 //            }  
             return con;  
-        }  
+        }else{
+        	LOG.info("=============数据库连接池信息"+DS.toString()+"=======con=null");
+        }
         return con;  
     }
     
@@ -80,7 +80,7 @@ public class BaseDataSource {
      *            最小连接数 
      * @return 
      */  
-    protected static void initDS(String connectURI, String username, String pswd,  
+    protected void initDS(String connectURI, String username, String pswd,  
             String driverClass, int initialSize, int maxtotal, int maxIdle,  
             int maxWaitMillis , int minIdle) {  
         BasicDataSource ds = new BasicDataSource();  
@@ -89,16 +89,19 @@ public class BaseDataSource {
         ds.setPassword(pswd);  
         ds.setUrl(connectURI);  
         ds.setInitialSize(initialSize); // 初始的连接数；  
-        ds.setMaxTotal(maxtotal);  
+        ds.setMaxActive(maxtotal);  
         ds.setMaxIdle(maxIdle);  
-        ds.setMaxWaitMillis(maxWaitMillis);  
+        ds.setMaxWait(maxWaitMillis);  
         ds.setMinIdle(minIdle);  
+        
+        ds.setValidationQuery("select id from health.test limit 1;");
+        //ds.setValidationQueryTimeout(1);
         DS = ds;  
     } 
     
     
     /** 获得数据源连接状态 */  
-    protected static Map<String, Integer> getDataSourceStats() throws SQLException {  
+    protected Map<String, Integer> getDataSourceStats() throws SQLException {  
         BasicDataSource bds = (BasicDataSource) DS;  
         Map<String, Integer> map = new HashMap<String, Integer>(2);  
         map.put("active_number", bds.getNumActive());  
@@ -107,7 +110,7 @@ public class BaseDataSource {
     }  
   
     /** 关闭数据源 */  
-    protected static void shutdownDataSource() throws SQLException {  
+    protected void shutdownDataSource() throws SQLException {  
         BasicDataSource bds = (BasicDataSource) DS;  
         bds.close(); 
     }
