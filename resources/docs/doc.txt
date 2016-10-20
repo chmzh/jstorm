@@ -1,0 +1,5 @@
+表名全局唯一
+
+UserRegCompute:
+表名规则：
+在方法compute5m中，表名为:logType+"_"+5+"_user"

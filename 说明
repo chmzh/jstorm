@@ -1,0 +1,3 @@
+该程序在 master1 的 /opt/jstorm_topology
+提交topology
+jstorm jar cndw-jstorm.jar cndw.jstorm.DvMysqlTopology master1 /opt/jstorm_topology/conf
